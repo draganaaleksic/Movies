@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 
 import persistance.DataModelManager;
 import util.URIGenerator;
-
 import domain.AggregateRating;
 import domain.Audience;
 import domain.Movie;
