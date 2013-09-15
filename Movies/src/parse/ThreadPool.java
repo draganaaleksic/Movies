@@ -13,13 +13,14 @@ public class ThreadPool{
 	private ThreadPoolExecutor threadPool;
 	private ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(10);
 	
+	
 	public ThreadPool(){
 		threadPool = new ThreadPoolExecutor(poolSize, maxPoolSize, keepAliveTime, TimeUnit.SECONDS, queue);
 		RejectedExecutionHandler handler = new RejectedExecutionHandler() {			
 			@Override
 			public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(7000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

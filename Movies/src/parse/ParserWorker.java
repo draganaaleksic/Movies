@@ -8,6 +8,7 @@ public class ParserWorker extends Thread {
 		this.url = url;
 	}
 
+	
 	public void run() {
 		try {
 			Parser.parseMovie(url);

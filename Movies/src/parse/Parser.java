@@ -44,25 +44,27 @@ public class Parser {
 
 		Date today = new Date();
 		System.out.println(today);
-		if (today.after(movie.getDatePublished())) {
+		if (movie.getDatePublished()!=null) {
 
-			Element aggregateRatingElem = doc
-					.select(
-							"div[itemscope][itemtype=http://schema.org/AggregateRating]")
-					.first();
-			AggregateRating aggregateRating = parseAggregateRating(aggregateRatingElem);
-			if (aggregateRating == null) {
-				movie.setUri(URIGenerator.generate(movie));
-				DataModelManager.getInstance().save(movie);
-				return movie;
+			if (today.after(movie.getDatePublished())) {
+
+				Element aggregateRatingElem = doc
+						.select("div[itemscope][itemtype=http://schema.org/AggregateRating]")
+						.first();
+				AggregateRating aggregateRating = parseAggregateRating(aggregateRatingElem);
+				if (aggregateRating == null) {
+					movie.setUri(URIGenerator.generate(movie));
+					DataModelManager.getInstance().save(movie);
+					return movie;
+				}
+				movie.setAggregateRating(aggregateRating);
+
+				Element reviewElem = doc.select(
+						"span[itemscope][itemtype=http://schema.org/Review]")
+						.first();
+				Review review = parseReview(reviewElem);
+				movie.setReview(review);
 			}
-			movie.setAggregateRating(aggregateRating);
-
-			Element reviewElem = doc.select(
-					"span[itemscope][itemtype=http://schema.org/Review]")
-					.first();
-			Review review = parseReview(reviewElem);
-			movie.setReview(review);
 		}
 		movie.setUri(URIGenerator.generate(movie));
 		DataModelManager.getInstance().save(movie);
@@ -172,6 +174,10 @@ public class Parser {
 
 	private static Organization parseOrganization(Element organizationElem)
 			throws Exception {
+
+		if (organizationElem == null) {
+			return null;
+		}
 		Organization org = new Organization();
 
 		String name = organizationElem.select("span[itemprop=name]").text();
@@ -242,10 +248,13 @@ public class Parser {
 
 		String date = movieDiv.select("a meta[itemprop=datePublished]").attr(
 				"content");
+		System.out.println("neki datum hvata " + date);
 		// m.setDatePublished(new SimpleDateFormat("yyyy-MM-dd").parse(date));
-		m.setDatePublished(new SimpleDateFormat("yyyy").parse(date));
-		System.out.println("DATUM OBJAVLJIVANJA: " + m.getDatePublished());// srediti
-																			// format
+		if (!date.isEmpty()) {
+			m.setDatePublished(new SimpleDateFormat("yyyy").parse(date));
+			System.out.println("DATUM OBJAVLJIVANJA: " + m.getDatePublished());// srediti
+																				// format
+		}
 
 		String description = movieDiv.select("div[itemprop=description] p")
 				.text();
@@ -310,7 +319,11 @@ public class Parser {
 	private static Collection<Person> parsePersons(Element c) throws Exception {
 		Collection<Person> persons = new LinkedList<Person>();
 
+		if (c==null) {
+			return null;
+		}
 		Elements elem = c.select("a");
+		
 		for (Element e : elem) {
 			Person p = new Person();
 			String name = e.select("span[itemprop=name]").text();
@@ -351,26 +364,25 @@ public class Parser {
 		return p;
 	}
 
-	public static void parseIMDB(String allMovies)
-			throws Exception {
+	public static void parseIMDB(String allMovies) throws Exception {
 		Collection<Movie> movies = new LinkedList<Movie>();
 		Document doc = Jsoup.connect(allMovies).userAgent("Mozilla").get();
 		Element table = doc.select("table.results").first();
 
 		Elements rows = table.select("tr td.image");
 
-		ThreadPool tp = new ThreadPool();
+		//ThreadPool tp = new ThreadPool();
 
 		for (Element element : rows) {
 			String url = element.select("a").attr("href");
 			String i = "http://www.imdb.com" + url;
 			// System.out.println( "URL FILMAAAAAAAAAA " +i);
-			ParserWorker parser = new ParserWorker(i);
-			tp.runTask(parser);
-			// Movie m = parseMovie(i);
-			// movies.add(m);
+			// ParserWorker parser = new ParserWorker(i);
+			// tp.runTask(parser);
+			Movie m = parseMovie(i);
+			movies.add(m);
 		}
-		tp.shutDown();
-		//return movies;
+		// tp.shutDown();
+		// return movies;
 	}
 }
