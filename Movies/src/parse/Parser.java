@@ -303,6 +303,8 @@ public class Parser {
 			Person p = parsePerson(e);
 			actor.add(p);
 		}
+		m.setActor(actor);
+		
 		System.out.println("PODACI O KREATORU");
 		Element c = movieDiv.select("div[itemprop=creator]").first();
 		Collection<Person> per = parsePersons(c);

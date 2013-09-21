@@ -9,6 +9,8 @@ import thewebsemantic.Bean2RDF;
 import thewebsemantic.RDF2Bean;
 
 
+import util.Constants;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -22,6 +24,8 @@ public class DataModelManager {
 	
 	public DataModelManager (){
 		dataProvider = new TDBDataProvider();
+		getModel().setNsPrefix("schema", Constants.SCHEMA);
+		// dodati konstantu ns movies??????????????
 		writer = new Bean2RDF(getModel());
 		reader = new RDF2Bean(getModel());
 		

@@ -43,7 +43,7 @@ public class CreativeWork extends Thing{
 	@RdfProperty(Constants.SCHEMA + "aggregateRating")
 	private AggregateRating aggregateRating;
 
-	@RdfProperty(Constants.SCHEMA + "creator")
+	@RdfProperty(Constants.SCHEMA + "creatorOrg")
 	private Organization creatorOrganizator;
 
 	@RdfProperty(Constants.SCHEMA + "creator")
