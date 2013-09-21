@@ -110,9 +110,9 @@ public class QueryService {
 			filter += "FILTER regex( ?name, \"" + name + "\", \"i\" ) ";
 		}
 		if (!author.isEmpty()) {
-			where += "?review schema:author ?author. "
-					+ "?director schema:name ?name. ";
-			filter += "FILTER regex( ?name, \"" + author + "\", \"i\" ) ";
+			where += "?review schema:author ?author. ";
+					
+			filter += "FILTER regex( ?author, \"" + author + "\", \"i\" ) ";
 		}
 		String query = "PREFIX schema: <" + Constants.SCHEMA + "> "
 				+ "SELECT ?review " 
